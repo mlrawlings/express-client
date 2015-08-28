@@ -159,7 +159,7 @@ app.createRequest = function createRequest(req) {
 
 app.createResponse = function createResponse() {
 	var res = {
-		redirect: app.redirect.bind(app)
+		redirect: this.redirect.bind(this)
 	}
 
 	return res
@@ -199,7 +199,8 @@ app.navigate = function navigate(request, options) {
 
 	this.handle(req, res, options.done || function(err) {
 		if(err) return console.error(err)
-		else window.location = req.originalUrl
+		else if(options.replace) window.location.reload()
+		else window.location = window.location.href
 	})
 
 	return true
@@ -241,9 +242,9 @@ app.start = function start() {
 		})
 	})
 
-	/*window.addEventListener('popstate', function(e) {
-		app.refresh()
-	})*/
+	window.addEventListener('popstate', function(e) {
+		if('state' in window.history && window.history.state !== null) app.refresh()
+	})
 }
 
 function delgateBody(selector, event, handler) {
